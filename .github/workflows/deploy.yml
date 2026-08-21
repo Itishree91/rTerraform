@@ -36,5 +36,5 @@ jobs:
 
       - name: Deploy site to S3
         run: |
-          aws s3 cp index.html s3://jayaguru/index.html
-          aws s3 cp about.html s3://jayaguru/about.html
+          aws s3 cp index.html s3://jayaguru-v2/index.html
+          aws s3 cp about.html s3://jayaguru-v2/about.html
