@@ -33,6 +33,27 @@ jobs:
 
       - name: Terraform Apply
         run: terraform apply -auto-approve
+        
+      - name: Package artifact
+        run: |
+          zip -r website-v${{ github.run_number }}.zip index.html about.html
+          echo "Packaged website-v${{ github.run_number }}.zip successfully"
+
+      - name: Upload to Nexus
+        run: |
+          curl -u ${{ secrets.NEXUS_USER }}:${{ secrets.NEXUS_PASSWORD }} \
+            -H "ngrok-skip-browser-warning: true" \
+            --upload-file website-v${{ github.run_number }}.zip \
+            ${{ secrets.NEXUS_URL }}/repository/website-artifacts/website-v${{ github.run_number }}.zip
+          echo "Uploaded to Nexus successfully"
+
+      - name: Download from Nexus
+        run: |
+          curl -u ${{ secrets.NEXUS_USER }}:${{ secrets.NEXUS_PASSWORD }} \
+            -H "ngrok-skip-browser-warning: true" \
+            -O ${{ secrets.NEXUS_URL }}/repository/website-artifacts/website-v${{ github.run_number }}.zip
+          unzip website-v${{ github.run_number }}.zip
+          echo "Downloaded and extracted from Nexus successfully"
 
       - name: Deploy site to S3
         run: |
